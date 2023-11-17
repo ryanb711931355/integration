@@ -7,12 +7,22 @@ from tests.common import client_session_proxy
 
 
 
+from typing import Optional
+
+import pytest
+from pytest_homeassistant_custom_component.common import client_session_proxy
+
+from custom_components.hacs.base import HacsBase
+from custom_components.hacs.enums import HacsCategory
+from custom_components.hacs.repositories.base import HacsRepository
+
+
 @pytest.mark.parametrize("version,name", [
     ("1.0.0", "Proxy integration"),
     ("99.99.99", None)
 ])
 @pytest.mark.asyncio
-async def test_validate_repository(hacs: HacsBase, version: str, name: str | None):
+async def test_validate_repository(hacs: HacsBase, version: str, name: Optional[str]):
     repository = HacsRepository(hacs=hacs)
     repository.data.full_name = "octocat/integration"
 
