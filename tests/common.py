@@ -49,13 +49,13 @@ TOKEN = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 INSTANCES = []
 REQUEST_CONTEXT: ContextVar[pytest.FixtureRequest] = ContextVar("request_context", default=None)
 
-IGNORED_BASE_FILES = set([
-        "/config/automations.yaml",
-        "/config/configuration.yaml",
-        "/config/scenes.yaml",
-        "/config/scripts.yaml",
-        "/config/secrets.yaml",
-    ])
+IGNORED_BASE_FILES = {
+    "/config/automations.yaml",
+    "/config/configuration.yaml",
+    "/config/scenes.yaml",
+    "/config/scripts.yaml",
+    "/config/secrets.yaml",
+}
 
 
 def safe_json_dumps(data: dict | list) -> str:
@@ -261,8 +261,8 @@ def mock_storage(data=None):
             mock_data = data.get(store.key)
 
             if "data" not in mock_data or "version" not in mock_data:
-                _LOGGER.error('Mock data needs "version" and "data"')
-                raise ValueError('Mock data needs "version" and "data"')
+                _LOGGER.error("Mock data needs \"version\" and \"data\"")
+                raise ValueError("Mock data needs \"version\" and \"data\"")
 
             store._data = mock_data
 
@@ -496,7 +496,10 @@ async def client_session_proxy(hass: ha.HomeAssistant) -> ClientSession:
             return resp
 
         url = URL(str_or_url)
-        fixture_file = f"fixtures/proxy/{url.host}{url.path}{'.json' if url.host in ('api.github.com', 'data-v2.hacs.xyz') and not url.path.endswith('.json') else ''}"
+        fixture_file = (
+            f"fixtures/proxy/{url.host}{url.path}"
+            f"{'.' + 'json' if url.host in ('api.github.com', 'data-v2.hacs.xyz') and not url.path.endswith('.json') else ''}"
+        )
         fp = os.path.join(
             os.path.dirname(__file__),
             fixture_file,
@@ -536,7 +539,7 @@ async def client_session_proxy(hass: ha.HomeAssistant) -> ClientSession:
 
 
 def create_config_entry(
-    data: dict[str, Any] = None, options: dict[str, Any] = None
+    data: dict[str, Any] | None = None, options: dict[str, Any] | None = None
 ) -> MockConfigEntry:
     try:
         # Core 2024.1 added minor_version
